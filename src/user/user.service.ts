@@ -45,10 +45,7 @@ export class UserService {
    * @param data 업데이트할 유저의 정보
    */
   async update(twitchUserId: number, data: User): Promise<User> {
-    console.log(twitchUserId);
-    return (await this.mongoService.updateUserDetail(
-      twitchUserId,
-      data,
-    )) as User;
+    await this.mongoService.updateUserDetail(twitchUserId, data);
+    return (await this.mongoService.getUserDetail(twitchUserId, false)) as User;
   }
 }
