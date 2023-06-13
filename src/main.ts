@@ -26,9 +26,7 @@ async function bootstrap() {
   console.log();
   console.log(`[ ENV            ]: ${process.env.NODE_ENV}`);
   console.log(`[ HOST URL       ]: ${process.env.HOST_URL}`);
-  console.log(
-    `[ API URL        ]: ${process.env.API_URL} at port ${process.env.NODE_PORT}`,
-  );
+  console.log(`[ API URL        ]: ${process.env.API_URL} at port ${process.env.NODE_PORT}`);
   console.log(`[ CORS WHITELIST ]: ${whitelist}`);
   console.log();
   console.log('================================================');
