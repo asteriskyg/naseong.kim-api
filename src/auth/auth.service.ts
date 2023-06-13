@@ -53,31 +53,45 @@ export class AuthService {
       );
       const twitchUserData = getTwitchUserData.data.data[0] as TwitchUserData;
 
-      const getFollowData = await firstValueFrom(
-        this.httpService.get(
-          `https://api.twitch.tv/helix/users/follows?to_id=103991968&from_id=${twitchUserData.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${twitchToken.access_token}`,
-              'Client-ID': process.env.TWITCH_CLIENT_ID,
+      let follow = undefined;
+      try {
+        const getFollowData = await firstValueFrom(
+          this.httpService.get(
+            `https://api.twitch.tv/helix/users/follows?to_id=103991968&from_id=${twitchUserData.id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${twitchToken.access_token}`,
+                'Client-ID': process.env.TWITCH_CLIENT_ID,
+              },
             },
-          },
-        ),
-      );
-      const follow = getFollowData.data;
+          ),
+        );
+        follow = getFollowData.data;
+      } catch (e) {
+        if (e.response.status === 404) {
+          follow = undefined;
+        }
+      }
 
-      const getSubscriptionData = await firstValueFrom(
-        this.httpService.get(
-          `https://api.twitch.tv/helix/subscriptions/user?broadcaster_id=103991968&user_id=${twitchUserData.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${twitchToken.access_token}`,
-              'Client-ID': process.env.TWITCH_CLIENT_ID,
+      let subscription = undefined;
+      try {
+        const getSubscriptionData = await firstValueFrom(
+          this.httpService.get(
+            `https://api.twitch.tv/helix/subscriptions/user?broadcaster_id=103991968&user_id=${twitchUserData.id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${twitchToken.access_token}`,
+                'Client-ID': process.env.TWITCH_CLIENT_ID,
+              },
             },
-          },
-        ),
-      );
-      const subscription = getSubscriptionData.data;
+          ),
+        );
+        subscription = getSubscriptionData.data;
+      } catch (e) {
+        if (e.response.status === 404) {
+          subscription = undefined;
+        }
+      }
 
       const localToken = await this.tokenService.generateNewAuthority(
         Number(twitchUserData.id),
@@ -100,9 +114,9 @@ export class AuthService {
           twitchAccessToken: twitchToken.access_token,
           twitchRefreshToken: twitchToken.refresh_token,
           serviceRefreshToken: refreshTokenArray,
-          follow: (follow.data[0]?.followed_at as Date) || user.follow,
+          follow: (follow?.data[0]?.followed_at as Date) || user.follow,
           subscription:
-            (subscription.data[0]?.tier as number) || user.subscription,
+            (subscription?.data[0]?.tier as number) || user.subscription,
           registeredAt: user.registeredAt,
           profileBackgroundUrl: user.profileBackgroundUrl,
           userType: user.userType,
@@ -126,8 +140,8 @@ export class AuthService {
           twitchAccessToken: twitchToken.access_token,
           twitchRefreshToken: twitchToken.refresh_token,
           serviceRefreshToken: [localToken.refreshToken],
-          follow: (follow.data[0]?.followed_at as Date) || undefined,
-          subscription: (subscription.data[0]?.tier as number) || undefined,
+          follow: (follow?.data[0]?.followed_at as Date) || undefined,
+          subscription: (subscription?.data[0]?.tier as number) || undefined,
           userType: userType,
           profileBackgroundUrl: '',
         });
@@ -139,7 +153,7 @@ export class AuthService {
         Refresh: localToken.refreshToken,
       };
     } catch (e) {
-      console.log(e.response.data);
+      console.log(e);
       return { status: 500 };
     }
   }
