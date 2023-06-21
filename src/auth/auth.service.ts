@@ -48,6 +48,7 @@ export class AuthService {
           headers: {
             authorization: `Bearer ${twitchToken.access_token}`,
             'client-id': process.env.TWITCH_CLIENT_ID,
+            'Accept-Encoding': 'gzip,deflate,compress',
           },
         }),
       );
@@ -62,6 +63,7 @@ export class AuthService {
               headers: {
                 Authorization: `Bearer ${twitchToken.access_token}`,
                 'Client-ID': process.env.TWITCH_CLIENT_ID,
+                'Accept-Encoding': 'gzip,deflate,compress',
               },
             },
           ),
@@ -82,6 +84,7 @@ export class AuthService {
               headers: {
                 Authorization: `Bearer ${twitchToken.access_token}`,
                 'Client-ID': process.env.TWITCH_CLIENT_ID,
+                'Accept-Encoding': 'gzip,deflate,compress',
               },
             },
           ),
@@ -226,6 +229,7 @@ export class AuthService {
           {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
+              'Accept-Encoding': 'gzip,deflate,compress',
             },
           },
         ),

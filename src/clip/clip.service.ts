@@ -63,6 +63,7 @@ export class ClipService {
           headers: {
             Authorization: user.twitchAccessToken,
             creatorName: encodeURIComponent(user.displayName),
+            'Accept-Encoding': 'gzip,deflate,compress',
           },
         }),
       )
@@ -135,6 +136,7 @@ export class ClipService {
           {
             headers: {
               Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+              'Accept-Encoding': 'gzip,deflate,compress',
             },
           },
         ),
@@ -162,6 +164,7 @@ export class ClipService {
           {
             headers: {
               Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+              'Accept-Encoding': 'gzip,deflate,compress',
             },
           },
         ),
@@ -198,6 +201,7 @@ export class ClipService {
             {
               headers: {
                 Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+                'Accept-Encoding': 'gzip,deflate,compress',
               },
             },
           ),
@@ -222,6 +226,7 @@ export class ClipService {
         headers: {
           newId: uid,
           id: clipName,
+          'Accept-Encoding': 'gzip,deflate,compress',
         },
       });
 
@@ -378,6 +383,7 @@ export class ClipService {
             headers: {
               ...form.getHeaders(),
               Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+              'Accept-Encoding': 'gzip,deflate,compress',
             },
           },
         ),
@@ -412,6 +418,7 @@ export class ClipService {
         {
           headers: {
             Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+            'Accept-Encoding': 'gzip,deflate,compress',
           },
         },
       ),

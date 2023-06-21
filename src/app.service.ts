@@ -28,6 +28,7 @@ export class AppService {
             headers: {
               Authorization: `Bearer ${user.twitchAccessToken}`,
               'Client-ID': process.env.TWITCH_CLIENT_ID,
+              'Accept-Encoding': 'gzip,deflate,compress',
             },
           },
         ),
