@@ -13,7 +13,7 @@ export class AuthController {
     if (!code) return res.status(400).send();
 
     const token = await this.authService.login(code);
-    if (token.status !== 200) return res.status(500).send();
+    if (token.status !== 200) return res.status(403).send();
 
     res.cookie('Authorization', token.Authorization, {
       domain: 'naseong.kim',
