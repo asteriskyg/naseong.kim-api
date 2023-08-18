@@ -31,7 +31,7 @@ export class UserController {
       return res.status(400).send();
 
     const user = await this.userService.detail(
-      Number(twitchUserId) || req.cookies.Refresh,
+      Number(twitchUserId) || req.cookies.Authorization,
       false,
     );
 
