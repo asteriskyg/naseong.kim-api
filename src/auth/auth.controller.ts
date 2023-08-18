@@ -33,7 +33,10 @@ export class AuthController {
       maxAge: 1000 * 60 * 60 * 24 * 7 * 2, // 14일
     });
 
-    return res.send();
+    return res.send({
+      access: token.Authorization,
+      refresh: token.Refresh,
+    });
   }
 
   @UseGuards(JwtAccessGuard)
@@ -92,6 +95,9 @@ export class AuthController {
       maxAge: 1000 * 60 * 60 * 24 * 7 * 2, // 14일
     });
 
-    return res.send();
+    return res.send({
+      access: token.Authorization,
+      refresh: token.Refresh,
+    });
   }
 }
