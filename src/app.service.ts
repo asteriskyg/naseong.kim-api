@@ -50,4 +50,30 @@ export class AppService {
       return { status: 'unknown' };
     }
   }
+
+  /**
+   * 방송 상태를 더 나은 방식으로 조회합니다.
+   */
+  async streamV2() {
+    const token = await this.authService.getTwitchAccessToken();
+    if (!token) return undefined;
+
+    const response = await firstValueFrom(
+      this.httpService.get(
+        `https://api.twitch.tv/helix/streams?user_id=${process.env.TWITCH_BROADCASTER_ID}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.access_token}`,
+            'Client-ID': process.env.TWITCH_CLIENT_ID,
+            'Accept-Encoding': 'gzip,deflate,compress',
+          },
+        },
+      ),
+    );
+
+    if (response.status !== 200) return undefined;
+
+    const stream = response.data;
+    return stream;
+  }
 }

@@ -9,4 +9,9 @@ export class AppController {
   async stream() {
     return await this.appService.stream();
   }
+
+  @Get('streamV2')
+  async streamV2() {
+    return await this.appService.streamV2();
+  }
 }
