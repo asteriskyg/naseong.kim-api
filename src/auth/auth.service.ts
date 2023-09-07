@@ -254,4 +254,19 @@ export class AuthService {
       throw new Error();
     }
   }
+
+  /**
+   * 트위치 앱 엑세스 토큰을 발급합니다.
+   * @returns 트위치 앱 액세스 토큰
+   */
+  async getTwitchAccessToken() {
+    const response = await firstValueFrom(
+      this.httpService.post(
+        `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_CLIENT_ID}&client_secret=${process.env.TWITCH_CLIENT_SECRET}&grant_type=client_credentials`,
+      ),
+    );
+
+    if (response.status !== 200) return undefined;
+    return response.data;
+  }
 }
