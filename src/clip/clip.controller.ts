@@ -51,8 +51,13 @@ export class ClipController {
 
   @UseGuards(JwtAccessGuard)
   @Get('create')
-  async create(@Req() req: Request) {
-    return await this.clipService.create(req.cookies.Authorization);
+  async create(@Req() req: Request, @Res() res: Response) {
+    const response = await this.clipService.create(
+      req.cookies.Authorization || req.cookies.authorization,
+    );
+
+    if (!response) return res.status(500).send();
+    return res.send(response);
   }
 
   @UseGuards(JwtAccessGuard)

@@ -50,44 +50,50 @@ export class ClipService {
 
   /**
    * 클립을 생성하고 DB에 저장합니다.
-   * @param Authorization
+   * @param authorization
    * @returns 생성한 클립의 정보를 반환합니다. (clipName, clipId, broadcastTitle)
    */
-  async create(Authorization: string) {
-    const object = await this.tokenService.decodeJWT(Authorization);
+  async create(authorization: string) {
+    const object = await this.tokenService.decodeJWT(authorization);
     const user = await this.mongoService.getUserDetail(object.aud, true);
 
-    const clip = await (
-      await firstValueFrom(
-        this.httpService.get(`${process.env.CLOUDFLARE_WORKERS_URL}/getClip`, {
-          headers: {
-            Authorization: user.twitchAccessToken,
-            creatorName: encodeURIComponent(user.displayName),
-            'Accept-Encoding': 'gzip,deflate,compress',
-          },
-        }),
-      )
-    ).data;
+    let clip = undefined;
+
+    const createClip = async () =>
+      (
+        await firstValueFrom(
+          this.httpService.get(
+            `${process.env.CLOUDFLARE_WORKERS_URL}/getClip`,
+            {
+              headers: {
+                authorization: user.twitchAccessToken,
+                creatorName: encodeURIComponent(user.displayName),
+                'Accept-Encoding': 'gzip,deflate,compress',
+              },
+            },
+          ),
+        )
+      ).data;
 
     try {
-      return await this.mongoService.createClip({
-        contentId: clip.url.uid,
-        contentName: clip.channelTitle,
-        gameId: clip.gameId,
-        gameName: clip.gameName,
-        creatorId: user.twitchUserId,
-        creatorName: user.displayName,
-        streamStartedAt: clip.startedAt,
-        clipCreatedAt: clip.url.created,
-        clipDuration: 90,
-        clipLastEdited: clip.url.created,
-        clipName: clip.clipName,
-      });
+      const response = await createClip();
+      clip = response;
     } catch (e) {
+      console.log(e.response.data);
+      console.log(e.response.status);
+      if (e.response.status === 401) {
+        try {
+          await this.authService.refreshTwitchToken(user);
+        } catch (e) {
+          return undefined;
+        }
+      }
+
       try {
-        await this.authService.refreshTwitchToken(user);
+        const response = await createClip();
+        clip = response;
       } catch (e) {
-        return { error: 'refreshTokenExpired' };
+        return undefined;
       }
     }
 
@@ -135,7 +141,7 @@ export class ClipService {
           `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/stream/${clip.contentId}`,
           {
             headers: {
-              Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+              authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
               'Accept-Encoding': 'gzip,deflate,compress',
             },
           },
@@ -163,7 +169,7 @@ export class ClipService {
           {},
           {
             headers: {
-              Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+              authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
               'Accept-Encoding': 'gzip,deflate,compress',
             },
           },
@@ -200,7 +206,7 @@ export class ClipService {
             },
             {
               headers: {
-                Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+                authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
                 'Accept-Encoding': 'gzip,deflate,compress',
               },
             },
@@ -239,11 +245,11 @@ export class ClipService {
 
   /**
    * 유튜브에서 클립을 가져옵니다.
-   * @param Authorization
+   * @param authorization
    * @param url
    * @returns
    */
-  async import(Authorization: string, url: string) {
+  async import(authorization: string, url: string) {
     const DOCKER_URL = process.env.DOCKER_URL;
 
     if (!/https:\/\/(www\.)?youtube\.com\/clip\/(.*?)$/.test(url))
@@ -290,7 +296,7 @@ export class ClipService {
         },
       };
 
-    const jwt = await this.tokenService.decodeJWT(Authorization);
+    const jwt = await this.tokenService.decodeJWT(authorization);
     const user = await this.mongoService.getUserDetail(jwt.aud, true);
 
     const clip = await this.mongoService.createClip({
@@ -382,7 +388,7 @@ export class ClipService {
           {
             headers: {
               ...form.getHeaders(),
-              Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+              authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
               'Accept-Encoding': 'gzip,deflate,compress',
             },
           },
@@ -417,7 +423,7 @@ export class ClipService {
         { creator: user.displayName },
         {
           headers: {
-            Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+            authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
             'Accept-Encoding': 'gzip,deflate,compress',
           },
         },
