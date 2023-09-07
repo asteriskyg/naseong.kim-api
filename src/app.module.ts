@@ -10,7 +10,6 @@ import { UserModule } from './user/user.module';
 import { ClipModule } from './clip/clip.module';
 import { ContentModule } from './content/content.module';
 import { MongoModule } from './mongo/mongo.module';
-import { SocketModule } from './socket/socket.module';
 
 @Module({
   imports: [
@@ -23,7 +22,6 @@ import { SocketModule } from './socket/socket.module';
     TokenModule,
     AuthModule,
     UserModule,
-    SocketModule,
     ClipModule,
     ContentModule,
     MongoModule,
