@@ -61,7 +61,7 @@ export class AuthService {
             `https://api.twitch.tv/helix/users/follows?to_id=103991968&from_id=${twitchUserData.id}`,
             {
               headers: {
-                Authorization: `Bearer ${twitchToken.access_token}`,
+                authorization: `Bearer ${twitchToken.access_token}`,
                 'Client-ID': process.env.TWITCH_CLIENT_ID,
                 'Accept-Encoding': 'gzip,deflate,compress',
               },
@@ -82,7 +82,7 @@ export class AuthService {
             `https://api.twitch.tv/helix/subscriptions/user?broadcaster_id=103991968&user_id=${twitchUserData.id}`,
             {
               headers: {
-                Authorization: `Bearer ${twitchToken.access_token}`,
+                authorization: `Bearer ${twitchToken.access_token}`,
                 'Client-ID': process.env.TWITCH_CLIENT_ID,
                 'Accept-Encoding': 'gzip,deflate,compress',
               },
@@ -152,8 +152,8 @@ export class AuthService {
 
       return {
         status: 200,
-        Authorization: localToken.accessToken,
-        Refresh: localToken.refreshToken,
+        authorization: localToken.accessToken,
+        refresh: localToken.refreshToken,
       };
     } catch (e) {
       console.log(e);
@@ -163,21 +163,21 @@ export class AuthService {
 
   /**
    * 유저를 로그아웃 처리합니다.
-   * @param Refresh
+   * @param refresh
    * @returns
    */
-  async logout(Refresh: string) {
-    const jwt = await this.tokenService.decodeJWT(Refresh);
-    return await this.mongoService.logoutUser(Refresh, jwt.aud);
+  async logout(refresh: string) {
+    const jwt = await this.tokenService.decodeJWT(refresh);
+    return await this.mongoService.logoutUser(refresh, jwt.aud);
   }
 
   /**
    * Refresh 쿠키를 이용하여 새로운 토큰을 발급합니다.
-   * @param Refresh
+   * @param refresh
    * @returns 새로운 토큰 (access_token, refresh_token)
    */
-  async refresh(Refresh: string) {
-    const jwt = await this.tokenService.decodeJWT(Refresh);
+  async refresh(refresh: string) {
+    const jwt = await this.tokenService.decodeJWT(refresh);
     if (!jwt.scope) return { status: 401, error: 'token scope missmatch' };
 
     const user = await this.mongoService.getUserDetail(jwt.aud, true);
@@ -205,8 +205,8 @@ export class AuthService {
 
     return {
       status: 200,
-      Authorization: token.accessToken,
-      Refresh: token.refreshToken,
+      authorization: token.accessToken,
+      refresh: token.refreshToken,
     };
   }
 

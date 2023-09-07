@@ -26,7 +26,7 @@ export class AppService {
           `https://api.twitch.tv/helix/streams?user_id=${process.env.TWITCH_BROADCASTER_ID}`,
           {
             headers: {
-              Authorization: `Bearer ${user.twitchAccessToken}`,
+              authorization: `Bearer ${user.twitchAccessToken}`,
               'Client-ID': process.env.TWITCH_CLIENT_ID,
               'Accept-Encoding': 'gzip,deflate,compress',
             },
@@ -63,7 +63,7 @@ export class AppService {
         `https://api.twitch.tv/helix/streams?user_id=${process.env.TWITCH_BROADCASTER_ID}`,
         {
           headers: {
-            Authorization: `Bearer ${token.access_token}`,
+            authorization: `Bearer ${token.access_token}`,
             'Client-ID': process.env.TWITCH_CLIENT_ID,
             'Accept-Encoding': 'gzip,deflate,compress',
           },

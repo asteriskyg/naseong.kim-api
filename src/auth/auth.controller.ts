@@ -15,7 +15,7 @@ export class AuthController {
     const token = await this.authService.login(code);
     if (token.status !== 200) return res.status(403).send();
 
-    res.cookie('Authorization', token.Authorization, {
+    res.cookie('Authorization', token.authorization, {
       domain: 'naseong.kim',
       path: '/',
       httpOnly: true,
@@ -24,7 +24,7 @@ export class AuthController {
       maxAge: 1000 * 60 * 30, // 30분
     });
 
-    res.cookie('Refresh', token.Refresh, {
+    res.cookie('Refresh', token.refresh, {
       domain: 'naseong.kim',
       path: '/',
       httpOnly: true,
@@ -34,8 +34,8 @@ export class AuthController {
     });
 
     return res.send({
-      access: token.Authorization,
-      refresh: token.Refresh,
+      access: token.authorization,
+      refresh: token.refresh,
     });
   }
 
@@ -77,7 +77,7 @@ export class AuthController {
     const token = await this.authService.refresh(req.cookies.Refresh);
     if (token.status !== 200) return res.status(401).send(token.error);
 
-    res.cookie('Authorization', token.Authorization, {
+    res.cookie('Authorization', token.authorization, {
       domain: 'naseong.kim',
       path: '/',
       httpOnly: true,
@@ -86,7 +86,7 @@ export class AuthController {
       maxAge: 1000 * 60 * 30, // 30분
     });
 
-    res.cookie('Refresh', token.Refresh, {
+    res.cookie('Refresh', token.refresh, {
       domain: 'naseong.kim',
       path: '/',
       httpOnly: true,
@@ -96,8 +96,8 @@ export class AuthController {
     });
 
     return res.send({
-      access: token.Authorization,
-      refresh: token.Refresh,
+      access: token.authorization,
+      refresh: token.refresh,
     });
   }
 }
