@@ -53,7 +53,7 @@ export class ClipController {
   @Get('create')
   async create(@Req() req: Request, @Res() res: Response) {
     const response = await this.clipService.create(
-      req.cookies.Authorization || req.cookies.authorization,
+      req.cookies.authorization || req.cookies.Authorization,
     );
 
     if (!response) return res.status(500).send();
@@ -92,7 +92,7 @@ export class ClipController {
     if (!url) return res.status(400).send();
 
     const response = await this.clipService.import(
-      req.cookies.Authorization,
+      req.cookies.authorization || req.cookies.Authorization,
       url,
     );
     if (response.status !== 200) {

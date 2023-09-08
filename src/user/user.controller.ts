@@ -27,11 +27,17 @@ export class UserController {
     @Query('id') twitchUserId: string,
     @Res() res: Response,
   ) {
-    if (!twitchUserId && !req.cookies.Authorization)
+    if (
+      !twitchUserId &&
+      !req.cookies.authorization &&
+      !req.cookies.Authorization
+    )
       return res.status(400).send();
 
     const user = await this.userService.detail(
-      Number(twitchUserId) || req.cookies.Authorization,
+      Number(twitchUserId) ||
+        req.cookies.authorization ||
+        req.cookies.Authorization,
       false,
     );
 
@@ -42,7 +48,9 @@ export class UserController {
   @UseGuards(JwtAccessGuard)
   @Post('update')
   async update(@Req() req: Request, @Body('data') data: User) {
-    const jwt = await this.tokenService.decodeJWT(req.cookies.Authorization);
+    const jwt = await this.tokenService.decodeJWT(
+      req.cookies.authorization || req.cookies.Authorization,
+    );
     const user = await this.userService.update(jwt.aud, data);
     return user;
   }

@@ -42,7 +42,7 @@ export class AuthController {
   @UseGuards(JwtAccessGuard)
   @Get('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
-    await this.authService.logout(req.cookies.Refresh);
+    await this.authService.logout(req.cookies.refresh || req.cookies.Refresh);
 
     res.cookie('Authorization', 'REMOVED', {
       domain: 'naseong.kim',
@@ -74,7 +74,9 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
   async getRefreshToken(@Req() req: Request, @Res() res: Response) {
-    const token = await this.authService.refresh(req.cookies.Refresh);
+    const token = await this.authService.refresh(
+      req.cookies.refresh || req.cookies.Refresh,
+    );
     if (token.status !== 200) return res.status(401).send(token.error);
 
     res.cookie('Authorization', token.authorization, {

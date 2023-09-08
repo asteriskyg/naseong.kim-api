@@ -14,7 +14,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {
-          return req.cookies.Refresh;
+          return req.cookies.refresh || req.cookies.Refresh;
         },
       ]),
       ignoreExpiration: false,
@@ -24,7 +24,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
   }
 
   async validate(req: Request, payload: any) {
-    const refreshToken = req.cookies.Refresh;
+    const refreshToken = req.cookies.refresh || req.cookies.Refresh;
     const twitchUserId = payload.aud;
     const user = await this.mongoService.getUserDetail(twitchUserId, true);
     const refreshTokenArray = user?.serviceRefreshToken;
