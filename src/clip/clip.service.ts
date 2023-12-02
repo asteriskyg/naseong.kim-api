@@ -97,6 +97,12 @@ export class ClipService {
       }
     }
 
+    fetch(`${process.env.CLOUDFLARE_WORKERS_URL}/activate`, {
+      headers: {
+        id: clip.url.uid,
+      },
+    });
+
     return await this.mongoService.createClip({
       contentId: clip.url.uid,
       contentName: clip.channelTitle,
